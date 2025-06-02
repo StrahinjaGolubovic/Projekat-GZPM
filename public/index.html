@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAFIK ZARADA / PM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .title {
+            text-align: center;
+            color: #36a2eb;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .date-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .date-selector label {
+            color: #555;
+            font-size: 1em;
+            font-weight: 600;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .date-selector select {
+            padding: 12px 20px;
+            border: 2px solid #e1e5ea;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            color: #333;
+            transition: all 0.3s ease;
+            width: auto;
+            min-width: 200px;
+            cursor: pointer;
+            background-color: #fff;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            text-align: center;
+            text-align-last: center;
+            position: relative;
+            z-index: 1;
+            white-space: nowrap;
+            overflow: visible;
+            text-overflow: clip;
+            direction: ltr;
+        }
+
+        .date-selector select option {
+            text-align: center;
+            direction: ltr;
+            padding: 12px;
+            font-size: 16px;
+            background-color: white;
+            color: #333;
+        }
+
+        .date-selector select:focus {
+            outline: none;
+            border-color: #36a2eb;
+            box-shadow: 0 0 0 3px rgba(54, 162, 235, 0.1);
+        }
+
+        .date-selector select:hover {
+            border-color: #36a2eb;
+        }
+
+        .input-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .text-area-container {
+            margin-bottom: 25px;
+        }
+
+        .text-area-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .text-area-container textarea {
+            width: 100%;
+            height: 300px;
+            padding: 16px;
+            border: 2px solid #e1e5ea;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            resize: vertical;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre;
+            overflow-y: auto;
+            min-height: 300px;
+        }
+
+        .text-area-container textarea:focus {
+            outline: none;
+            border-color: #36a2eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(54, 162, 235, 0.1);
+        }
+
+        .example-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 8px;
+            font-family: monospace;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 0 1 auto;
+        }
+
+        .btn-primary {
+            background-color: #36a2eb;
+            color: white;
+            min-width: 160px;
+            padding: 14px 28px;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            background-color: #2985c7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(54, 162, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #e1e5ea;
+            color: #555;
+            min-width: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .btn-secondary i {
+            font-size: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5da;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:hover i {
+            transform: scale(1.2);
+        }
+
+        .sort-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: 400px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .date-selector {
+                padding: 15px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .date-selector label {
+                text-align: center;
+                margin-bottom: 5px;
+                font-size: 16px;
+                white-space: nowrap;
+            }
+
+            .date-selector select {
+                width: 100%;
+                min-width: unset;
+                padding: 12px 40px;
+                font-size: 16px;
+                height: 48px;
+                margin: 0;
+                background-color: #ffffff;
+                border-width: 2px;
+                text-align: center;
+                text-align-last: center;
+                direction: ltr;
+                letter-spacing: 0.5px;
+            }
+
+            .date-selector select option {
+                padding: 16px;
+                text-align: center;
+                direction: ltr;
+            }
+
+            .date-selector select:active {
+                background-color: rgba(54, 162, 235, 0.1);
+            }
+
+            .sort-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .button-container {
+                flex-direction: row;
+                gap: 15px;
+            }
+            
+            .btn-primary {
+                min-width: 140px;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .chart-container {
+                height: 300px;
+                padding: 10px;
+                margin: 0 -10px;
+                border-radius: 8px;
+            }
+
+            .btn-secondary {
+                min-width: 150px;
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .btn-secondary i {
+                font-size: 14px;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .date-selector input[type="date"] {
+                background-color: #fff;
+                color: #333;
+            }
+        }
+
+        .nav-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #36a2eb;
+            color: white;
+            padding: 20px;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(54, 162, 235, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(54, 162, 235, 0.4);
+        }
+
+        .nav-button i {
+            font-size: 24px;
+        }
+
+        .logout-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(244, 67, 54, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-button:hover {
+            background-color: #d32f2f;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            max-width: 90%;
+            width: auto;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .notification.success {
+            border-left: 4px solid #4caf50;
+        }
+
+        .notification.error {
+            border-left: 4px solid #f44336;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .notification {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div id="notification" class="notification"></div>
+    <div class="container">
+        <div class="input-container">
+            <div class="text-area-container">
+                <label for="dataInput">UNOS</label>
+                <textarea id="dataInput"></textarea>
+            </div>
+            <div class="button-container">
+                <button onclick="window.processTextData()" class="btn-primary">Dodaj Zaradu</button>
+                <button onclick="window.calculateDailyEarnings()" class="btn-primary">Izracunaj Zaradu</button>
+            </div>
+        </div>
+
+        <div class="date-selector">
+            <label for="dateFilter">IZABERI DATUM:</label>
+            <select id="dateFilter" name="dateFilter"></select>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="earningsChart"></canvas>
+        </div>
+
+        <div class="sort-container">
+            <button class="btn-secondary" id="sortAscBtn">Sortiraj Datum <i class="fas fa-arrow-up"></i></button>
+            <button class="btn-secondary" id="sortDescBtn">Sortiraj Datum <i class="fas fa-arrow-down"></i></button>
+        </div>
+    </div>
+    <a href="send.html" class="nav-button" title="Slanje Podataka">
+        <i class="fas fa-paper-plane"></i>
+    </a>
+    <a href="#" class="logout-button" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        ODJAVI SE
+    </a>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, push, onValue, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPC7v0OM0RHOCUfeXedr6R5j6h_9NTxDI",
+            authDomain: "gzpm-ff5af.firebaseapp.com",
+            projectId: "gzpm-ff5af",
+            storageBucket: "gzpm-ff5af.firebasestorage.app",
+            messagingSenderId: "112141302390",
+            appId: "1:112141302390:web:41aab52df32202a2c73d57",
+            measurementId: "G-8MK0EW76EV",
+            databaseURL: "https://gzpm-ff5af-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        let earningsData = [];
+        let myChart = null;
+        let selectedDate = null;
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => {
+                window.location.href = 'login.html';
+            });
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function processTextData() {
+            const text = document.getElementById('dataInput').value.trim();
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            
+            if (lines.length === 0) {
+                showNotification('UNESI PODATKE!', 'error');
+                return;
+            }
+
+            const newData = [];
+            for (let i = 0; i < lines.length; i += 4) {
+                if (i + 3 < lines.length) {
+                    const name = lines[i];
+                    const dateStr = lines[i + 1];
+                    const transactionType = lines[i + 2];
+                    const earningStr = lines[i + 3];
+                    
+                    if (transactionType.includes('Zarada')) {
+                        const earning = parseFloat(earningStr);
+                        if (!isNaN(earning)) {
+                            const timestamp = moment(dateStr, 'MMM Do, YYYY h:mm A').format('YYYY-MM-DD[T]HH:mm:ss');
+                            const dataEntry = {
+                                name: name,
+                                timestamp: timestamp,
+                                earning: earning
+                            };
+                            newData.push(dataEntry);
+                            
+                            const earningsRef = ref(database, 'earnings');
+                            push(earningsRef, dataEntry)
+                                .then(() => {
+                                    document.getElementById('dataInput').value = '';
+                                })
+                                .catch((error) => {
+                                    showNotification('GRESKA: ' + error.message, 'error');
+                                });
+                        }
+                    }
+                }
+            }
+
+            if (newData.length > 0) {
+                showNotification('PODACI USPESNO POSLATI!');
+            }
+        }
+
+        function calculateDailyEarnings() {
+            const selectedDate = document.getElementById('dateFilter').value;
+
+            if (!selectedDate) {
+                showNotification('IZABERI DATUM!', 'error');
+                return;
+            }
+
+            const earningsRef = ref(database, 'earnings');
+            get(earningsRef).then((snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    earningsData = Object.values(data);
+                    
+                    const filteredData = earningsData.filter(entry => 
+                        moment(entry.timestamp).format('YYYY-MM-DD') === selectedDate
+                    );
+
+                    if (filteredData.length === 0) {
+                        showNotification('NEMA PODATAKA ZA IZABRANI DATUM!', 'error');
+                        return;
+                    }
+
+                    const totalEarnings = filteredData.reduce((sum, entry) => sum + entry.earning, 0);
+                    const uniqueNames = [...new Set(filteredData.map(entry => entry.name))];
+
+                    const summaryData = {
+                        date: selectedDate,
+                        totalEarnings: totalEarnings,
+                        numberOfTransactions: filteredData.length,
+                        uniqueContributors: uniqueNames,
+                        timestamp: new Date().toISOString(),
+                        calculatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+                    };
+
+                    const totalEarningsRef = ref(database, 'totalEarnings');
+                    push(totalEarningsRef, summaryData)
+                        .then(() => {
+                            showNotification(`UKUPNA ZARADA ZA ${moment(selectedDate).format('DD.MM.YYYY')}: ${totalEarnings}e`);
+                            updateChart();
+                        })
+                        .catch((error) => {
+                            showNotification('GRESKA PRI CUVANJU PODATAKA: ' + error.message, 'error');
+                        });
+                } else {
+                    showNotification('NEMA PODATAKA U BAZI!', 'error');
+                }
+            }).catch((error) => {
+                showNotification('GRESKA PRI UCITAVANJU: ' + error.message, 'error');
+            });
+        }
+
+        window.processTextData = processTextData;
+        window.calculateDailyEarnings = calculateDailyEarnings;
+
+        function updateDateSelector() {
+            const dateSelector = document.getElementById('dateFilter');
+            const dates = [...new Set(earningsData.map(data => 
+                moment(data.timestamp).format('YYYY-MM-DD')
+            ))];
+            dates.sort().reverse();
+
+            dateSelector.innerHTML = '';
+            
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = dates.length > 0 ? 'Datum' : 'Nema podataka';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            dateSelector.appendChild(defaultOption);
+            
+            if (dates.length > 0) {
+                dates.forEach(date => {
+                    const option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = moment(date).format('DD.MM.YYYY.');
+                    dateSelector.appendChild(option);
+                });
+            }
+
+            if ('ontouchstart' in window) {
+                dateSelector.addEventListener('touchstart', function(e) {
+                    this.focus();
+                }, false);
+            }
+
+            dateSelector.addEventListener('change', function(e) {
+                if (this.value) {
+                    filterByDate(this.value);
+                    updateChart();
+                }
+            });
+        }
+
+        function filterByDate(date) {
+            selectedDate = date;
+            updateChart();
+        }
+
+        function processDataByMinute(data) {
+            const filteredData = selectedDate 
+                ? data.filter(entry => moment(entry.timestamp).format('YYYY-MM-DD') === selectedDate)
+                : data;
+
+            const minuteMap = {};
+            
+            filteredData.forEach(entry => {
+                const minute = entry.timestamp;
+                if (!minuteMap[minute]) {
+                    minuteMap[minute] = {
+                        timestamp: minute,
+                        earning: 0,
+                        names: []
+                    };
+                }
+                minuteMap[minute].earning += entry.earning;
+                minuteMap[minute].names.push(entry.name);
+            });
+
+            return Object.values(minuteMap)
+                .sort((a, b) => moment(a.timestamp).valueOf() - moment(b.timestamp).valueOf());
+        }
+
+        function formatTimestamp(timestamp) {
+            return moment(timestamp).format('MMM Do, YYYY h:mm A');
+        }
+
+        function updateChart(sortDirection = 'asc') {
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            const processedData = processDataByMinute(earningsData);
+            
+            if (sortDirection === 'desc') {
+                processedData.reverse();
+            }
+
+            const isMobile = window.innerWidth <= 768;
+            
+            const labels = processedData.map(data => {
+                const time = isMobile ? 
+                    moment(data.timestamp).format('HH:mm') : 
+                    formatTimestamp(data.timestamp);
+                const names = isMobile ? 
+                    data.names.join(', ').substring(0, 15) + (data.names.join(', ').length > 15 ? '...' : '') : 
+                    data.names.join(', ');
+                return isMobile ? `${time}` : `${time}\n${names}`;
+            });
+            const earnings = processedData.map(data => data.earning);
+
+            const ctx = document.getElementById('earningsChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Zarada po minuti',
+                        data: earnings,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        maxBarThickness: isMobile ? 30 : 50
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: isMobile ? 5 : 10,
+                            right: isMobile ? 5 : 10,
+                            top: isMobile ? 5 : 10,
+                            bottom: isMobile ? 5 : 10
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: !isMobile,
+                                text: 'Zarada (e)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'e';
+                                },
+                                font: {
+                                    size: isMobile ? 10 : 12
+                                },
+                                maxRotation: 0
+                            },
+                            grid: {
+                                display: !isMobile
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: !isMobile,
+                                text: 'Vreme'
+                            },
+                            ticks: {
+                                maxRotation: isMobile ? 45 : 0,
+                                minRotation: isMobile ? 45 : 0,
+                                font: {
+                                    size: isMobile ? 10 : 12
+                                },
+                                autoSkip: true,
+                                maxTicksLimit: isMobile ? 8 : 15
+                            },
+                            grid: {
+                                display: !isMobile
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: selectedDate ? 
+                                isMobile ? 
+                                    moment(selectedDate).format('DD.MM.YYYY.') : 
+                                    `GRAFIK ZARADA ZA ${moment(selectedDate).format('DD.MM.YYYY.')}` : 
+                                'GRAFIK ZARADA PO MINUTIMA',
+                            font: {
+                                size: isMobile ? 14 : 16
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: isMobile ? 10 : 20
+                            }
+                        },
+                        legend: {
+                            display: !isMobile
+                        },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    const dataIndex = context.dataIndex;
+                                    const names = processedData[dataIndex].names;
+                                    const timestamp = formatTimestamp(processedData[dataIndex].timestamp);
+                                    return [
+                                        `Vreme: ${timestamp}`,
+                                        `Zarada: ${context.raw}e`,
+                                        `Od: ${names.join(', ')}`
+                                    ];
+                                }
+                            },
+                            titleFont: {
+                                size: isMobile ? 12 : 14
+                            },
+                            bodyFont: {
+                                size: isMobile ? 11 : 13
+                            },
+                            padding: isMobile ? 8 : 12,
+                            displayColors: false
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        const earningsRef = ref(database, 'earnings');
+        onValue(earningsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                earningsData = Object.values(data);
+                updateChart();
+                updateDateSelector();
+            }
+        }, (error) => {
+            showNotification('GRESKA PRI UCITAVANJU: ' + error.message, 'error');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateFilter = document.getElementById('dateFilter');
+            
+            dateFilter.addEventListener('change', (e) => {
+                filterByDate(e.target.value);
+                updateChart();
+            });
+            
+            document.getElementById('sortAscBtn').addEventListener('click', () => updateChart('asc'));
+            document.getElementById('sortDescBtn').addEventListener('click', () => updateChart('desc'));
+            
+            updateChart();
+        });
+    </script>
+</body>
+</html> 

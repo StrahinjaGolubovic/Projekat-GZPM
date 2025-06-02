@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GZPM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .title {
+            color: #36a2eb;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(54, 162, 235, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: #36a2eb;
+            border-radius: 2px;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 50px;
+            background-color: #ffffff;
+            color: #3c4043;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 
+                        0 1px 2px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .google-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .google-btn:hover {
+            background-color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
+                        0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .google-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1),
+                        0 1px 2px rgba(0, 0, 0, 0.08);
+        }
+
+        .google-btn:hover::before {
+            opacity: 0.04;
+        }
+
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .google-icon {
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=');
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        .google-btn span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Google Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        @media (max-width: 480px) {
+            .google-btn {
+                max-width: 100%;
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+        }
+
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">LOGIN</div>
+        <button class="google-btn" onclick="signInWithGoogle()">
+            <div class="google-icon"></div>
+            <span>Google</span>
+        </button>
+        <div id="status" class="status"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPC7v0OM0RHOCUfeXedr6R5j6h_9NTxDI",
+            authDomain: "gzpm-ff5af.firebaseapp.com",
+            projectId: "gzpm-ff5af",
+            storageBucket: "gzpm-ff5af.firebasestorage.app",
+            messagingSenderId: "112141302390",
+            appId: "1:112141302390:web:41aab52df32202a2c73d57",
+            measurementId: "G-8MK0EW76EV",
+            databaseURL: "https://gzpm-ff5af-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+
+        window.signInWithGoogle = function() {
+            const statusElement = document.getElementById('status');
+            signInWithPopup(auth, provider)
+                .then(() => {
+                    window.location.href = 'index.html';
+                })
+                .catch((error) => {
+                    let errorMessage;
+                    switch (error.code) {
+                        case 'auth/popup-closed-by-user':
+                            errorMessage = 'Prijava otkazana.';
+                            break;
+                        case 'auth/popup-blocked':
+                            errorMessage = 'Pop-up blokiran. Dozvoli pop-up za ovu stranicu.';
+                            break;
+                        case 'auth/cancelled-popup-request':
+                            errorMessage = 'Prijava otkazana.';
+                            break;
+                        case 'auth/network-request-failed':
+                            errorMessage = 'Problem sa internet konekcijom.';
+                            break;
+                        default:
+                            errorMessage = 'Greška pri prijavi: ' + error.message;
+                    }
+                    statusElement.textContent = errorMessage;
+                    statusElement.className = 'status error';
+                });
+        };
+    </script>
+</body>
+</html> 
