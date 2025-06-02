@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slanje Podataka</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-area-container {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 16px;
+            border: 2px solid #e1e5ea;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            resize: vertical;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #36a2eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(54, 162, 235, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background-color: #36a2eb;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2985c7;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(54, 162, 235, 0.2);
+        }
+
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            color: #555;
+        }
+
+        .success {
+            color: #4caf50;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        .nav-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #36a2eb;
+            color: white;
+            padding: 20px;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(54, 162, 235, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(54, 162, 235, 0.4);
+        }
+
+        .nav-button i {
+            font-size: 24px;
+        }
+
+        .logout-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(244, 67, 54, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-button:hover {
+            background-color: #d32f2f;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="text-area-container">
+            <textarea id="dataInput" placeholder="Unesi podatke..."></textarea>
+        </div>
+        <button onclick="processTextData()">Posalji</button>
+        <div id="status" class="status"></div>
+    </div>
+    <a href="index.html" class="nav-button" title="Grafik">
+        <i class="fas fa-chart-line"></i>
+    </a>
+    <a href="#" class="logout-button" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        ODJAVI SE
+    </a>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPC7v0OM0RHOCUfeXedr6R5j6h_9NTxDI",
+            authDomain: "gzpm-ff5af.firebaseapp.com",
+            projectId: "gzpm-ff5af",
+            storageBucket: "gzpm-ff5af.firebasestorage.app",
+            messagingSenderId: "112141302390",
+            appId: "1:112141302390:web:41aab52df32202a2c73d57",
+            measurementId: "G-8MK0EW76EV",
+            databaseURL: "https://gzpm-ff5af-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            }
+        });
+
+        window.logout = function() {
+            signOut(auth).then(() => {
+                window.location.href = 'login.html';
+            });
+        };
+
+        window.processTextData = function() {
+            const text = document.getElementById('dataInput').value.trim();
+            const statusElement = document.getElementById('status');
+
+            if (!text) {
+                statusElement.textContent = 'UNESI PODATKE!';
+                statusElement.className = 'status error';
+                return;
+            }
+
+            const timestamp = new Date().toISOString();
+
+            const data = {
+                text: text,
+                timestamp: timestamp
+            };
+            
+            const messagesRef = ref(database, 'messages');
+
+            push(messagesRef, data)
+                .then(() => {
+                    statusElement.textContent = 'PODACI USPESNO POSLATI!';
+                    statusElement.className = 'status success';
+                    document.getElementById('dataInput').value = '';
+                })
+                .catch((error) => {
+                    statusElement.textContent = 'GRESKA PRI SLANJU: ' + error.message;
+                    statusElement.className = 'status error';
+                });
+        };
+    </script>
+</body>
+</html> 
